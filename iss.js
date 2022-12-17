@@ -56,6 +56,15 @@ const fetchISSFlyOverTimes = (coords, callback) => {
   });
 };
 
+const printISSFlyoverTimes = (times) => {
+  for (const time of times) {
+    const datetime = new Date(0);
+    datetime.setUTCSeconds(time.risetime);
+    const duration = time.duration;
+    console.log(`Next pass at ${datetime} for ${duration} seconds!`);
+  }
+};
+
 const nextISSTimesForMyLocation = (callback) => {
   fetchMyIP((error, ip) => {
     if (error) {
@@ -69,14 +78,18 @@ const nextISSTimesForMyLocation = (callback) => {
         if (error) {
           return callback(error, null);
         }
-
-        callback(null, passes);
+        printISSFlyoverTimes(passes, (error) => {
+          if (error) {
+            return callback(error, null);
+          }
+          callback(null, passes);
+        });
       });
     });
-
   });
 };
 
 module.exports = {
-  nextISSTimesForMyLocation
+  nextISSTimesForMyLocation,
+  printISSFlyoverTimes
 };
